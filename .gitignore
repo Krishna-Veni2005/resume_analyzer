@@ -40,3 +40,4 @@ dist/
 # Temporary files
 *.tmp
 *.swp
+uploads/

@@ -7,20 +7,26 @@ from src.components.skill_extraction import SkillExtractor
 from src.components.resume_scorer import ResumeScorer
 from src.components.job_matcher import JobMatcher
 from src.components.skill_suggester import SkillSuggester
-from flask_bcrypt import Bcrypt
+
 app = Flask(__name__)
 
+# -------------------------------
+# ✅ UPLOAD FOLDER FIX
+# -------------------------------
 UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)   # 🔥 IMPORTANT
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# DATABASE CONFIG
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+# -------------------------------
+# ✅ DATABASE CONFIG
+# -------------------------------
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 db = SQLAlchemy(app)
 
-with app.app_context():
-    db.create_all()
-
-# DATABASE MODELS
+# -------------------------------
+# ✅ MODELS (MUST COME BEFORE create_all)
+# -------------------------------
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(200))
@@ -35,6 +41,15 @@ class Resume(db.Model):
     skills = db.Column(db.String(500))
 
 
+# -------------------------------
+# ✅ CREATE TABLES (AFTER MODELS)
+# -------------------------------
+with app.app_context():
+    db.create_all()
+
+# -------------------------------
+# ROUTES
+# -------------------------------
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -83,7 +98,6 @@ def upload_resume():
 
 @app.route("/register", methods=["POST"])
 def register():
-
     username = request.form["username"]
     email = request.form["email"]
     password = request.form["password"]
@@ -98,7 +112,6 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login():
-
     email = request.form["email"]
     password = request.form["password"]
 
@@ -111,4 +124,4 @@ def login():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
