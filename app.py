@@ -17,6 +17,8 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
+with app.app_context():
+    db.create_all()
 
 # DATABASE MODELS
 class User(db.Model):
