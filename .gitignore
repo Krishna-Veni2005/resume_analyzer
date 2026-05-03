@@ -16,8 +16,6 @@ instance/
 logs/
 *.log
 
-# Uploaded files (user resumes)
-uploads/
 
 # Environment variables
 .env
